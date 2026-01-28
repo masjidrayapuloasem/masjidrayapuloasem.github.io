@@ -1,10 +1,23 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { href: "#beranda", label: "Beranda" },
-  { href: "#tentang", label: "Tentang" },
+  { 
+    href: "#profil", 
+    label: "Profil",
+    submenu: [
+      { href: "#visi-misi", label: "Visi & Misi" },
+      { href: "#kepengurusan", label: "Kepengurusan" },
+    ]
+  },
   { href: "#jadwal", label: "Jadwal Sholat" },
   { href: "#kegiatan", label: "Kegiatan" },
   { href: "#donasi", label: "Donasi" },
@@ -14,6 +27,7 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +36,10 @@ export function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleMobileSubmenu = (label: string) => {
+    setOpenMobileSubmenu(openMobileSubmenu === label ? null : label);
+  };
 
   return (
     <header
@@ -48,15 +66,42 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                isScrolled ? "text-foreground" : "text-primary-foreground"
-              }`}
-            >
-              {link.label}
-            </a>
+            link.submenu ? (
+              <DropdownMenu key={link.href}>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                      isScrolled ? "text-foreground" : "text-primary-foreground"
+                    }`}
+                  >
+                    {link.label}
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {link.submenu.map((subItem) => (
+                    <DropdownMenuItem key={subItem.href} asChild>
+                      <a
+                        href={subItem.href}
+                        className="w-full cursor-pointer"
+                      >
+                        {subItem.label}
+                      </a>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  isScrolled ? "text-foreground" : "text-primary-foreground"
+                }`}
+              >
+                {link.label}
+              </a>
+            )
           ))}
         </nav>
 
@@ -79,14 +124,40 @@ export function Header() {
       {isMobileMenuOpen && (
         <nav className="lg:hidden glass mt-2 mx-4 rounded-lg p-4 shadow-elevated">
           {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="block py-3 px-4 text-foreground hover:text-primary hover:bg-accent rounded-md transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.label}
-            </a>
+            link.submenu ? (
+              <div key={link.href}>
+                <button
+                  onClick={() => toggleMobileSubmenu(link.label)}
+                  className="w-full flex items-center justify-between py-3 px-4 text-foreground hover:text-primary hover:bg-accent rounded-md transition-colors"
+                >
+                  {link.label}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${openMobileSubmenu === link.label ? "rotate-180" : ""}`} />
+                </button>
+                {openMobileSubmenu === link.label && (
+                  <div className="ml-4 border-l-2 border-primary/20">
+                    {link.submenu.map((subItem) => (
+                      <a
+                        key={subItem.href}
+                        href={subItem.href}
+                        className="block py-2 px-4 text-muted-foreground hover:text-primary hover:bg-accent rounded-md transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {subItem.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className="block py-3 px-4 text-foreground hover:text-primary hover:bg-accent rounded-md transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.label}
+              </a>
+            )
           ))}
         </nav>
       )}
