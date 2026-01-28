@@ -1,73 +1,142 @@
-# Welcome to your Lovable project
+# Masjid Raya Pulo Asem
 
-## Project info
+Website resmi Masjid Raya Pulo Asem - Jakarta Timur
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Tentang Project
 
-## How can I edit this code?
+Website ini merupakan portal informasi Masjid Raya Pulo Asem yang menyediakan:
+- Informasi tentang masjid (sejarah, visi & misi)
+- Jadwal sholat real-time untuk wilayah Jakarta
+- Kegiatan dan program masjid
+- Informasi donasi dan zakat
+- Dan berbagai informasi lainnya
 
-There are several ways of editing your application.
+## Demo
 
-**Use Lovable**
+Website dapat diakses di: [https://azharsetiawan.github.io/masjidrayapuloasem](https://azharsetiawan.github.io/masjidrayapuloasem)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+Project ini dibangun menggunakan:
 
-**Use your preferred IDE**
+- **Vite** - Build tool dan dev server
+- **React 18** - Library untuk UI
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - Komponen UI yang dapat disesuaikan
+- **React Router** - Routing
+- **TanStack Query** - Data fetching dan state management
+- **Lucide React** - Icon library
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Development
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
 
-Follow these steps:
+- Node.js (v18 atau lebih tinggi)
+- npm atau bun
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# Clone repository
+git clone git@github.com:azharsetiawan/masjidrayapuloasem.git
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Masuk ke directory project
+cd masjidrayapuloasem
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Install dependencies
+npm install
+# atau jika menggunakan bun
+bun install
 ```
 
-**Edit a file directly in GitHub**
+### Running Development Server
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Jalankan development server
+npm run dev
+# atau
+bun run dev
+```
 
-**Use GitHub Codespaces**
+Server akan berjalan di `http://localhost:8080`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Build for Production
 
-## What technologies are used for this project?
+```bash
+# Build project
+npm run build
+# atau
+bun run build
+```
 
-This project is built with:
+Hasil build akan ada di folder `dist/`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Preview Production Build
 
-## How can I deploy this project?
+```bash
+# Preview hasil build
+npm run preview
+# atau
+bun run preview
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Deployment
 
-## Can I connect a custom domain to my Lovable project?
+Project ini menggunakan GitHub Actions untuk otomatis deploy ke GitHub Pages.
 
-Yes, you can!
+Setiap push ke branch `main` akan otomatis trigger build dan deployment.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Workflow file: [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Project Structure
+
+```
+masjidrayapuloasem/
+├── src/
+│   ├── components/        # React components
+│   │   ├── ui/           # shadcn/ui components
+│   │   ├── Header.tsx
+│   │   ├── HeroSection.tsx
+│   │   ├── AboutSection.tsx
+│   │   ├── PrayerSchedule.tsx
+│   │   ├── ActivitiesSection.tsx
+│   │   ├── DonationSection.tsx
+│   │   └── Footer.tsx
+│   ├── pages/            # Page components
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Utility functions
+│   ├── App.tsx           # Main App component
+│   └── main.tsx          # Entry point
+├── public/               # Static assets
+├── .github/
+│   └── workflows/        # GitHub Actions workflows
+└── vite.config.ts        # Vite configuration
+```
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run test` - Run tests
+- `npm run test:watch` - Run tests in watch mode
+
+## Contributing
+
+Kontribusi sangat diterima! Jika ingin berkontribusi:
+
+1. Fork repository ini
+2. Buat branch baru (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+## License
+
+Project ini dibuat untuk Masjid Raya Pulo Asem.
+
+## Contact
+
+Untuk informasi lebih lanjut, silakan hubungi pengurus Masjid Raya Pulo Asem.
