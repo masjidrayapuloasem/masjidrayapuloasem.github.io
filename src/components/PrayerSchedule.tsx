@@ -195,7 +195,7 @@ export function PrayerSchedule() {
           </p>}
 
         {/* Note */}
-        <p className="text-center text-muted-foreground text-sm mt-4">* Jadwal sholat berdasarkan perhitungan Kemenag RI. Waktu dapat berbeda ±3 menit.</p>
+        <p className="text-center text-muted-foreground text-sm mt-4">* Jadwal sholat berdasarkan perhitungan Kemenag RI. Waktu dapat berbeda ±2 menit.</p>
       </div>
     </section>;
 }
