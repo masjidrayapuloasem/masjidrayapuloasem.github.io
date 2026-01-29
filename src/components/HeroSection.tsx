@@ -1,7 +1,48 @@
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import heroImage from "@/assets/hero-mosque.jpg";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Banner {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  image_url: string | null;
+}
 
 export function HeroSection() {
+  const [banner, setBanner] = useState<Banner | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActiveBanner = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("banners")
+          .select("id, title, subtitle, image_url")
+          .eq("active", true)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!error && data) {
+          setBanner(data);
+        }
+      } catch (error) {
+        console.error("Error fetching banner:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchActiveBanner();
+  }, []);
+
+  // Use banner from database if available, otherwise use defaults
+  const backgroundImage = banner?.image_url || heroImage;
+  const title = banner?.title || "Selamat Datang";
+  const subtitle = banner?.subtitle || "Masjid Raya Pulo Asem hadir sebagai rumah ibadah dan pusat kegiatan keislaman bagi masyarakat Pulo Asem dan sekitarnya.";
+
   return (
     <section
       id="beranda"
@@ -10,7 +51,7 @@ export function HeroSection() {
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        style={{ backgroundImage: `url(${backgroundImage})` }}
       />
       
       {/* Overlay */}
@@ -23,12 +64,11 @@ export function HeroSection() {
         </p>
         
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6">
-          Selamat Datang
+          {title}
         </h1>
         
         <p className="text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-8">
-          Masjid Raya Pulo Asem hadir sebagai rumah ibadah dan pusat kegiatan keislaman
-          bagi masyarakat Pulo Asem dan sekitarnya.
+          {subtitle}
         </p>
         
         <a
