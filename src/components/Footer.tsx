@@ -92,10 +92,16 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-background/10">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-center text-background/50 text-sm">
             © {new Date().getFullYear()} Masjid Raya Pulo Asem. Hak Cipta Dilindungi.
           </p>
+          <a 
+            href="/admin/login" 
+            className="text-background/30 hover:text-background/60 text-xs transition-colors"
+          >
+            Admin
+          </a>
         </div>
       </div>
     </footer>
