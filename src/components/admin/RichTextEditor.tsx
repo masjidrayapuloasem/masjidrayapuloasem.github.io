@@ -6,6 +6,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { isValidUrl } from "@/lib/errorUtils";
 import {
   Bold,
   Italic,
@@ -109,15 +110,23 @@ export function RichTextEditor({
   }
 
   const addLink = () => {
-    const url = window.prompt("Masukkan URL:");
+    const url = window.prompt("Masukkan URL (harus dimulai dengan http:// atau https://):");
     if (url) {
+      if (!isValidUrl(url)) {
+        window.alert("URL tidak valid. Gunakan format http:// atau https://");
+        return;
+      }
       editor.chain().focus().setLink({ href: url }).run();
     }
   };
 
   const addImage = () => {
-    const url = window.prompt("Masukkan URL gambar:");
+    const url = window.prompt("Masukkan URL gambar (harus dimulai dengan http:// atau https://):");
     if (url) {
+      if (!isValidUrl(url)) {
+        window.alert("URL gambar tidak valid. Gunakan format http:// atau https://");
+        return;
+      }
       editor.chain().focus().setImage({ src: url }).run();
     }
   };

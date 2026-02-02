@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { mapErrorToUserMessage } from "@/lib/errorUtils";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -133,10 +134,10 @@ export default function AdminAnnouncements() {
       setIsDialogOpen(false);
       resetForm();
       fetchData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal menyimpan pengumuman",
+        description: mapErrorToUserMessage(error, "Gagal menyimpan pengumuman"),
         variant: "destructive",
       });
     } finally {
@@ -152,10 +153,10 @@ export default function AdminAnnouncements() {
       if (error) throw error;
       toast({ title: "Berhasil", description: "Pengumuman berhasil dihapus" });
       fetchData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal menghapus pengumuman",
+        description: mapErrorToUserMessage(error, "Gagal menghapus pengumuman"),
         variant: "destructive",
       });
     }

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { mapErrorToUserMessage } from "@/lib/errorUtils";
 import { Loader2, Lock } from "lucide-react";
 import { SimpleCaptcha } from "@/components/admin/SimpleCaptcha";
 
@@ -48,7 +49,7 @@ export default function AdminLogin() {
       if (error) {
         toast({
           title: "Login Gagal",
-          description: error.message,
+          description: mapErrorToUserMessage(error, "Email atau password salah"),
           variant: "destructive",
         });
       } else {
