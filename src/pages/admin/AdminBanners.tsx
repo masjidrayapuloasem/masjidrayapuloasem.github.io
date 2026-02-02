@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { mapErrorToUserMessage } from "@/lib/errorUtils";
 import { Plus, Pencil, Trash2, Loader2, Upload } from "lucide-react";
 
 interface Banner {
@@ -60,8 +61,8 @@ export default function AdminBanners() {
 
       if (error) throw error;
       setBanners(data || []);
-    } catch (error) {
-      console.error("Error fetching banners:", error);
+    } catch {
+      // Silently handle to avoid information leakage
       toast({
         title: "Error",
         description: "Gagal memuat banner",
@@ -119,10 +120,10 @@ export default function AdminBanners() {
 
       setFormData((prev) => ({ ...prev, image_url: publicUrl }));
       toast({ title: "Berhasil", description: "Gambar berhasil diupload" });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal mengupload gambar",
+        description: mapErrorToUserMessage(error, "Gagal mengupload gambar"),
         variant: "destructive",
       });
     } finally {
@@ -164,10 +165,10 @@ export default function AdminBanners() {
       setIsDialogOpen(false);
       resetForm();
       fetchData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal menyimpan banner",
+        description: mapErrorToUserMessage(error, "Gagal menyimpan banner"),
         variant: "destructive",
       });
     } finally {
@@ -183,10 +184,10 @@ export default function AdminBanners() {
       if (error) throw error;
       toast({ title: "Berhasil", description: "Banner berhasil dihapus" });
       fetchData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal menghapus banner",
+        description: mapErrorToUserMessage(error, "Gagal menghapus banner"),
         variant: "destructive",
       });
     }

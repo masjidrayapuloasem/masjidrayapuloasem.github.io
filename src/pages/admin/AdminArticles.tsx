@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { mapErrorToUserMessage } from "@/lib/errorUtils";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -162,10 +163,10 @@ export default function AdminArticles() {
       setIsDialogOpen(false);
       resetForm();
       fetchArticles();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal menyimpan artikel",
+        description: mapErrorToUserMessage(error, "Gagal menyimpan artikel"),
         variant: "destructive",
       });
     } finally {
@@ -181,10 +182,10 @@ export default function AdminArticles() {
       if (error) throw error;
       toast({ title: "Berhasil", description: "Artikel berhasil dihapus" });
       fetchArticles();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Gagal menghapus artikel",
+        description: mapErrorToUserMessage(error, "Gagal menghapus artikel"),
         variant: "destructive",
       });
     }
