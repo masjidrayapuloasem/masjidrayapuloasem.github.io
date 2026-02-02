@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -278,11 +278,10 @@ export default function AdminArticles() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="content">Konten</Label>
-                <Textarea
-                  id="content"
+                <RichTextEditor
                   value={formData.content}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-                  rows={8}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, content: value }))}
+                  placeholder="Tulis konten artikel di sini..."
                 />
               </div>
               <div className="space-y-2">
