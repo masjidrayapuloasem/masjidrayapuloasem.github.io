@@ -36,8 +36,8 @@ export default function AdminDashboard() {
           schedules: schedulesRes.count || 0,
           banners: bannersRes.count || 0,
         });
-      } catch (error) {
-        console.error("Error fetching stats:", error);
+      } catch {
+        // Silently handle errors to avoid information leakage in production
       } finally {
         setIsLoading(false);
       }
