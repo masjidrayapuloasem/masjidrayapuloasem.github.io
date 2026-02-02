@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import {
   Table,
   TableBody,
@@ -272,11 +272,10 @@ export default function AdminSchedules() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="description">Deskripsi</Label>
-                <Textarea
-                  id="description"
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                  rows={3}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
+                  placeholder="Tulis deskripsi kegiatan di sini..."
                 />
               </div>
               <DialogFooter>
