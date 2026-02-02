@@ -32,8 +32,8 @@ export function ArticlesSection() {
         if (!error && data) {
           setArticles(data);
         }
-      } catch (error) {
-        console.error("Error fetching articles:", error);
+      } catch {
+        // Silently handle errors to avoid information leakage
       } finally {
         setIsLoading(false);
       }

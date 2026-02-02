@@ -3,6 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -94,7 +95,12 @@ export function RichTextEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      // Sanitize HTML output to prevent XSS attacks
+      const sanitizedHTML = DOMPurify.sanitize(editor.getHTML(), {
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'hr'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel'],
+      });
+      onChange(sanitizedHTML);
     },
   });
 

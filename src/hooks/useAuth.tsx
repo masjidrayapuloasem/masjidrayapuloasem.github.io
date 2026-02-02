@@ -30,13 +30,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .maybeSingle();
 
       if (error) {
-        console.error("Error checking admin role:", error);
+        // Log to monitoring service in production, avoid exposing details in console
+        if (import.meta.env.DEV) {
+          console.error("Error checking admin role:", error);
+        }
         return false;
       }
 
       return !!data;
-    } catch (error) {
-      console.error("Error checking admin role:", error);
+    } catch {
+      // Silently handle errors in production to avoid information leakage
       return false;
     }
   };

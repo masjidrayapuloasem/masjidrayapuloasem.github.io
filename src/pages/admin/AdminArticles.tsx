@@ -72,8 +72,8 @@ export default function AdminArticles() {
 
       if (error) throw error;
       setArticles(data || []);
-    } catch (error) {
-      console.error("Error fetching articles:", error);
+    } catch {
+      // Avoid logging sensitive error details in production
       toast({
         title: "Error",
         description: "Gagal memuat artikel",
