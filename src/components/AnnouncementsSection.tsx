@@ -20,18 +20,18 @@ export function AnnouncementsSection() {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
+        // Use public view to prevent admin UUID exposure
         const { data, error } = await supabase
-          .from("announcements")
+          .from("announcements_public")
           .select("id, title, description, display_date")
-          .eq("active", true)
           .order("display_date", { ascending: false })
           .limit(4);
 
         if (!error && data) {
           setAnnouncements(data);
         }
-      } catch (error) {
-        console.error("Error fetching announcements:", error);
+      } catch {
+        // Silently handle errors to avoid information leakage
       } finally {
         setIsLoading(false);
       }

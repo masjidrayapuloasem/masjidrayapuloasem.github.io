@@ -22,10 +22,10 @@ export function ArticlesSection() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
+        // Use public view to prevent admin UUID exposure
         const { data, error } = await supabase
-          .from("articles")
+          .from("articles_public")
           .select("id, title, slug, content, image_url, created_at")
-          .eq("status", "published")
           .order("created_at", { ascending: false })
           .limit(3);
 
