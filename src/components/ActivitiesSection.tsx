@@ -49,9 +49,10 @@ export function ActivitiesSection() {
     const fetchSchedules = async () => {
       try {
         const today = new Date().toISOString().split("T")[0];
+        // Use public view to prevent admin UUID exposure
         const { data, error } = await supabase
-          .from("schedules")
-          .select("*")
+          .from("schedules_public")
+          .select("id, event_name, event_date, event_time, location, description")
           .gte("event_date", today)
           .order("event_date", { ascending: true })
           .limit(6);
@@ -59,8 +60,8 @@ export function ActivitiesSection() {
         if (!error && data) {
           setSchedules(data);
         }
-      } catch (error) {
-        console.error("Error fetching schedules:", error);
+      } catch {
+        // Silently handle errors to avoid information leakage
       } finally {
         setIsLoading(false);
       }

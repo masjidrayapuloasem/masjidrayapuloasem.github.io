@@ -175,7 +175,132 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      announcements_public: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          display_date: string | null
+          id: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          display_date?: string | null
+          id?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          display_date?: string | null
+          id?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      articles_public: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          image_url: string | null
+          slug: string | null
+          status: Database["public"]["Enums"]["article_status"] | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          slug?: string | null
+          status?: Database["public"]["Enums"]["article_status"] | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          slug?: string | null
+          status?: Database["public"]["Enums"]["article_status"] | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      banners_public: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string | null
+          image_url: string | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      schedules_public: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          event_date: string | null
+          event_name: string | null
+          event_time: string | null
+          id: string | null
+          location: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          event_date?: string | null
+          event_name?: string | null
+          event_time?: string | null
+          id?: string | null
+          location?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          event_date?: string | null
+          event_name?: string | null
+          event_time?: string | null
+          id?: string | null
+          location?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

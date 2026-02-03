@@ -17,10 +17,10 @@ export function HeroSection() {
   useEffect(() => {
     const fetchActiveBanner = async () => {
       try {
+        // Use public view to prevent admin UUID exposure
         const { data, error } = await supabase
-          .from("banners")
+          .from("banners_public")
           .select("id, title, subtitle, image_url")
-          .eq("active", true)
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -28,8 +28,8 @@ export function HeroSection() {
         if (!error && data) {
           setBanner(data);
         }
-      } catch (error) {
-        console.error("Error fetching banner:", error);
+      } catch {
+        // Silently handle errors to avoid information leakage
       } finally {
         setIsLoading(false);
       }
