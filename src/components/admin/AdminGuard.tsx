@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 
@@ -33,9 +33,9 @@ export function AdminGuard({ children }: AdminGuardProps) {
           <p className="text-muted-foreground">
             Anda tidak memiliki akses ke halaman admin.
           </p>
-          <a href="/" className="text-primary hover:underline">
+          <Link to="/" className="text-primary hover:underline">
             Kembali ke Beranda
-          </a>
+          </Link>
         </div>
       </div>
     );
