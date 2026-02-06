@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
@@ -96,12 +97,12 @@ export function Footer() {
           <p className="text-center text-background/50 text-sm">
             © {new Date().getFullYear()} Masjid Raya Pulo Asem. Hak Cipta Dilindungi.
           </p>
-          <a 
-            href="/admin/login" 
+          <Link 
+            to="/admin/login" 
             className="text-background/30 hover:text-background/60 text-xs transition-colors"
           >
             Admin
-          </a>
+          </Link>
         </div>
       </div>
     </footer>
