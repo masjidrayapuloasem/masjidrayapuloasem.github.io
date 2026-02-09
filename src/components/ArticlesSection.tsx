@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 import { Link } from "react-router-dom";
+import { truncateText } from "@/lib/utils";
 
 interface Article {
   id: string;
@@ -47,11 +48,6 @@ export function ArticlesSection() {
     return null;
   }
 
-  const truncateContent = (content: string | null, maxLength: number = 150) => {
-    if (!content) return "";
-    if (content.length <= maxLength) return content;
-    return content.slice(0, maxLength).trim() + "...";
-  };
 
   return (
     <section id="artikel" className="py-20 lg:py-32 bg-background">
@@ -97,7 +93,7 @@ export function ArticlesSection() {
                   </h3>
                   {article.content && (
                     <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
-                      {truncateContent(article.content)}
+                      {truncateText(article.content)}
                     </p>
                   )}
                 </CardContent>

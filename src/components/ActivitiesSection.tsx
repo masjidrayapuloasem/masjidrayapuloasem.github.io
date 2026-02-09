@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BookOpen, Users, Baby, HandHeart, CalendarDays, MapPin, Clock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { stripHtmlTags } from "@/lib/utils";
 import { id as localeId } from "date-fns/locale";
 
 // Default activities (fallback)
@@ -159,7 +160,7 @@ export function ActivitiesSection() {
                       </div>
                       {schedule.description && (
                         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                          {schedule.description}
+                          {stripHtmlTags(schedule.description)}
                         </p>
                       )}
                     </div>
