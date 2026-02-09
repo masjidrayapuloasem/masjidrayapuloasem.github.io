@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Megaphone, CalendarDays, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { stripHtmlTags } from "@/lib/utils";
 import { id as localeId } from "date-fns/locale";
 
 interface Announcement {
@@ -89,7 +90,7 @@ export function AnnouncementsSection() {
                 {announcement.description && (
                   <CardContent>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      {announcement.description}
+                      {stripHtmlTags(announcement.description)}
                     </p>
                   </CardContent>
                 )}
