@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          description: string | null
+          highlighted: boolean
+          icon_name: string | null
+          id: string
+          schedule_text: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          highlighted?: boolean
+          icon_name?: string | null
+          id?: string
+          schedule_text?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          highlighted?: boolean
+          icon_name?: string | null
+          id?: string
+          schedule_text?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           active: boolean
@@ -116,6 +155,75 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_images: {
+        Row: {
+          active: boolean
+          caption: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          caption?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          caption?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      organization_members: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          photo_url: string | null
+          position: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          photo_url?: string | null
+          position: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          photo_url?: string | null
+          position?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       schedules: {
         Row: {
           created_at: string
@@ -175,6 +283,42 @@ export type Database = {
       }
     }
     Views: {
+      activities_public: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          highlighted: boolean | null
+          icon_name: string | null
+          id: string | null
+          schedule_text: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          highlighted?: boolean | null
+          icon_name?: string | null
+          id?: string | null
+          schedule_text?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          highlighted?: boolean | null
+          icon_name?: string | null
+          id?: string | null
+          schedule_text?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       announcements_public: {
         Row: {
           active: boolean | null
@@ -264,6 +408,69 @@ export type Database = {
           image_url?: string | null
           subtitle?: string | null
           title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      hero_images_public: {
+        Row: {
+          active: boolean | null
+          caption: string | null
+          created_at: string | null
+          id: string | null
+          image_url: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      organization_members_public: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string | null
+          name: string | null
+          photo_url: string | null
+          position: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          photo_url?: string | null
+          position?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          photo_url?: string | null
+          position?: string | null
+          sort_order?: number | null
           updated_at?: string | null
         }
         Relationships: []
