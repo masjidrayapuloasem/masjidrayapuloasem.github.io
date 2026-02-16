@@ -1,37 +1,28 @@
 import { useEffect, useState } from "react";
-import { BookOpen, Users, Baby, HandHeart, CalendarDays, MapPin, Clock, Loader2 } from "lucide-react";
+import { BookOpen, Users, Baby, HandHeart, CalendarDays, MapPin, Clock, Loader2, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { stripHtmlTags } from "@/lib/utils";
 import { id as localeId } from "date-fns/locale";
+import { Link } from "react-router-dom";
 
-// Default activities (fallback)
-const defaultActivities = [
-  {
-    icon: BookOpen,
-    title: "Kajian Rutin",
-    description: "Kajian tafsir Al-Quran dan hadits setiap hari Ahad pagi dan Selasa malam",
-    schedule: "Ahad 06:00 & Selasa 19:30",
-  },
-  {
-    icon: Users,
-    title: "Majelis Ta'lim",
-    description: "Pengajian ibu-ibu dan bapak-bapak dengan tema seputar fiqih dan akhlak",
-    schedule: "Rabu & Kamis 09:00",
-  },
-  {
-    icon: Baby,
-    title: "TPA/TPQ",
-    description: "Taman Pendidikan Al-Quran untuk anak-anak usia dini hingga remaja",
-    schedule: "Senin - Jumat 15:30",
-  },
-  {
-    icon: HandHeart,
-    title: "Bakti Sosial",
-    description: "Program santunan yatim, dhuafa, dan bantuan untuk masyarakat sekitar",
-    schedule: "Setiap Jumat",
-  },
-];
+// Icon map for dynamic icon rendering
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  BookOpen,
+  Users,
+  Baby,
+  HandHeart,
+  CalendarDays,
+};
+
+interface Activity {
+  id: string;
+  title: string;
+  description: string | null;
+  icon_name: string | null;
+  schedule_text: string | null;
+  highlighted: boolean;
+}
 
 interface Schedule {
   id: string;
@@ -43,32 +34,38 @@ interface Schedule {
 }
 
 export function ActivitiesSection() {
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSchedules = async () => {
+    const fetchData = async () => {
       try {
         const today = new Date().toISOString().split("T")[0];
-        // Use public view to prevent admin UUID exposure
-        const { data, error } = await supabase
-          .from("schedules_public")
-          .select("id, event_name, event_date, event_time, location, description")
-          .gte("event_date", today)
-          .order("event_date", { ascending: true })
-          .limit(6);
+        const [activitiesRes, schedulesRes] = await Promise.all([
+          supabase
+            .from("activities_public")
+            .select("id, title, description, icon_name, schedule_text, highlighted")
+            .eq("highlighted", true)
+            .limit(8),
+          supabase
+            .from("schedules_public")
+            .select("id, event_name, event_date, event_time, location, description")
+            .gte("event_date", today)
+            .order("event_date", { ascending: true })
+            .limit(6),
+        ]);
 
-        if (!error && data) {
-          setSchedules(data);
-        }
+        if (!activitiesRes.error && activitiesRes.data) setActivities(activitiesRes.data);
+        if (!schedulesRes.error && schedulesRes.data) setSchedules(schedulesRes.data);
       } catch {
-        // Silently handle errors to avoid information leakage
+        // Silently handle
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchSchedules();
+    fetchData();
   }, []);
 
   return (
@@ -87,40 +84,60 @@ export function ActivitiesSection() {
           </p>
         </div>
 
-        {/* Default Activities Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {defaultActivities.map((activity) => (
-            <div
-              key={activity.title}
-              className="group bg-card rounded-2xl p-6 shadow-card border border-border hover:shadow-elevated hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center mb-5 group-hover:bg-primary transition-colors">
-                <activity.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
-              </div>
-              
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                {activity.title}
-              </h3>
-              
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                {activity.description}
-              </p>
-              
-              <div className="flex items-center gap-2 text-sm">
-                <span className="w-2 h-2 rounded-full bg-secondary" />
-                <span className="text-foreground font-medium">{activity.schedule}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Upcoming Schedules from Database */}
+        {/* Activities Grid */}
         {isLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : schedules.length > 0 && (
-          <div className="mt-16">
+        ) : activities.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {activities.map((activity) => {
+              const IconComponent = iconMap[activity.icon_name || "BookOpen"] || BookOpen;
+              return (
+                <div
+                  key={activity.id}
+                  className="group bg-card rounded-2xl p-6 shadow-card border border-border hover:shadow-elevated hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center mb-5 group-hover:bg-primary transition-colors">
+                    <IconComponent className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
+                  </div>
+
+                  <h3 className="text-xl font-bold text-foreground mb-2">
+                    {activity.title}
+                  </h3>
+
+                  {activity.description && (
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                      {stripHtmlTags(activity.description)}
+                    </p>
+                  )}
+
+                  {activity.schedule_text && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="w-2 h-2 rounded-full bg-secondary" />
+                      <span className="text-foreground font-medium">{activity.schedule_text}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
+        {/* View All Link */}
+        <div className="text-center mb-16">
+          <Link
+            to="/kegiatan"
+            className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
+          >
+            Lihat Semua Kegiatan
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Upcoming Schedules from Database */}
+        {!isLoading && schedules.length > 0 && (
+          <div className="mt-8">
             <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
               Jadwal Kegiatan Mendatang
             </h3>

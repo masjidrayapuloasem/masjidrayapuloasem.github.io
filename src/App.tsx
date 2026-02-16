@@ -6,12 +6,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import ActivitiesPage from "./pages/ActivitiesPage";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminArticles from "./pages/admin/AdminArticles";
 import AdminAnnouncements from "./pages/admin/AdminAnnouncements";
 import AdminSchedules from "./pages/admin/AdminSchedules";
 import AdminBanners from "./pages/admin/AdminBanners";
+import AdminHeroImages from "./pages/admin/AdminHeroImages";
+import AdminOrganization from "./pages/admin/AdminOrganization";
+import AdminActivities from "./pages/admin/AdminActivities";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +28,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/kegiatan" element={<ActivitiesPage />} />
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -32,6 +37,9 @@ const App = () => (
             <Route path="/admin/announcements" element={<AdminAnnouncements />} />
             <Route path="/admin/schedules" element={<AdminSchedules />} />
             <Route path="/admin/banners" element={<AdminBanners />} />
+            <Route path="/admin/hero-images" element={<AdminHeroImages />} />
+            <Route path="/admin/organization" element={<AdminOrganization />} />
+            <Route path="/admin/activities" element={<AdminActivities />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
