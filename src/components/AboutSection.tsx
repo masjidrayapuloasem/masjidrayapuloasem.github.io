@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Home, Target, Heart, Users, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import DOMPurify from "dompurify";
 
 interface OrgMember {
   id: string;
@@ -10,26 +11,40 @@ interface OrgMember {
   sort_order: number;
 }
 
+interface SiteContent {
+  key: string;
+  content: string;
+}
+
 export function AboutSection() {
   const [members, setMembers] = useState<OrgMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [content, setContent] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const { data, error } = await supabase
+    const fetchData = async () => {
+      const [membersRes, contentRes] = await Promise.all([
+        supabase
           .from("organization_members_public")
           .select("id, name, position, photo_url, sort_order")
-          .order("sort_order", { ascending: true });
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("site_content")
+          .select("key, content")
+          .in("key", ["sejarah", "sejarah_detail", "visi", "misi"]),
+      ]);
 
-        if (!error && data) setMembers(data);
-      } catch {
-        // Silently handle
-      } finally {
-        setIsLoading(false);
+      if (!membersRes.error && membersRes.data) setMembers(membersRes.data);
+      if (!contentRes.error && contentRes.data) {
+        const map: Record<string, string> = {};
+        contentRes.data.forEach((item: SiteContent) => {
+          map[item.key] = item.content;
+        });
+        setContent(map);
       }
+      setIsLoading(false);
     };
-    fetchMembers();
+    fetchData();
   }, []);
 
   return (
@@ -54,17 +69,13 @@ export function AboutSection() {
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Sejarah Singkat</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Masjid Raya Pulo Asem berdiri sebagai pusat kegiatan keislaman masyarakat
-                  di kawasan Pulo Asem, Jakarta Timur. Didirikan dengan visi untuk membina
-                  umat yang berilmu, beriman, dan berkontribusi bagi masyarakat sekitar.
+                  {content.sejarah || "Memuat..."}
                 </p>
               </div>
             </div>
 
             <p className="text-muted-foreground leading-relaxed pl-[4.5rem]">
-              Selama bertahun-tahun, Masjid Raya Pulo Asem telah menjadi rumah bagi berbagai
-              kegiatan dakwah, pendidikan, dan pengabdian kepada masyarakat. Masjid ini terus
-              berkembang menjadi tempat yang nyaman untuk beribadah dan menuntut ilmu.
+              {content.sejarah_detail || ""}
             </p>
           </div>
 
@@ -95,8 +106,7 @@ export function AboutSection() {
               <h3 className="text-2xl font-bold text-foreground">Visi</h3>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              Menjadi masjid yang memakmurkan umat, menjadi pusat pembinaan keislaman,
-              dan berkontribusi dalam membangun peradaban Islam yang rahmatan lil'alamin.
+              {content.visi || "Memuat..."}
             </p>
           </div>
 
@@ -108,20 +118,14 @@ export function AboutSection() {
               </div>
               <h3 className="text-2xl font-bold text-foreground">Misi</h3>
             </div>
-            <ul className="space-y-3 text-muted-foreground">
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>Menyelenggarakan ibadah sholat lima waktu dan sholat Jumat dengan khusyuk</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>Mengadakan kajian rutin dan pendidikan agama Islam</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span>Memberdayakan masyarakat melalui program sosial dan zakat</span>
-              </li>
-            </ul>
+            {content.misi ? (
+              <div
+                className="text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:space-y-3 [&_li]:flex [&_li]:items-start [&_li]:gap-2"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.misi) }}
+              />
+            ) : (
+              <p className="text-muted-foreground">Memuat...</p>
+            )}
           </div>
         </div>
 
