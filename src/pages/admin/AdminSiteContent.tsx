@@ -21,6 +21,9 @@ const CONTENT_KEYS = [
   { key: "sejarah_detail", label: "Detail Sejarah", useRichText: false },
   { key: "visi", label: "Visi", useRichText: false },
   { key: "misi", label: "Misi", useRichText: true },
+  { key: "ayat_arab", label: "Ayat Al-Quran (Arab)", useRichText: false },
+  { key: "ayat_terjemah", label: "Terjemah Ayat", useRichText: false },
+  { key: "ayat_sumber", label: "Sumber Ayat (mis: QS. At-Taubah: 18)", useRichText: false },
 ];
 
 export default function AdminSiteContent() {

@@ -31,7 +31,7 @@ export function AboutSection() {
         supabase
           .from("site_content")
           .select("key, content")
-          .in("key", ["sejarah", "sejarah_detail", "visi", "misi"]),
+          .in("key", ["sejarah", "sejarah_detail", "visi", "misi", "ayat_arab", "ayat_terjemah", "ayat_sumber"]),
       ]);
 
       if (!membersRes.error && membersRes.data) setMembers(membersRes.data);
@@ -83,13 +83,13 @@ export function AboutSection() {
           <div className="relative">
             <div className="bg-primary rounded-2xl p-8 lg:p-12 text-primary-foreground islamic-pattern">
               <p className="font-arabic text-2xl lg:text-3xl text-center mb-4 text-secondary">
-                إِنَّمَا يَعْمُرُ مَسَاجِدَ اللَّهِ
+                {content.ayat_arab || "إِنَّمَا يَعْمُرُ مَسَاجِدَ اللَّهِ"}
               </p>
               <p className="text-center text-primary-foreground/90 italic">
-                "Hanyalah yang memakmurkan masjid-masjid Allah..."
+                "{content.ayat_terjemah || "Hanyalah yang memakmurkan masjid-masjid Allah..."}"
               </p>
               <p className="text-center text-sm text-primary-foreground/70 mt-2">
-                — QS. At-Taubah: 18
+                — {content.ayat_sumber || "QS. At-Taubah: 18"}
               </p>
             </div>
           </div>
