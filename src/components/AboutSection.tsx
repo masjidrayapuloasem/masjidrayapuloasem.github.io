@@ -52,8 +52,7 @@ export function AboutSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16 stagger-children">
-          <span className="text-secondary font-arabic text-xl">عن المسجد</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-2 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Tentang Masjid
           </h2>
           <div className="section-divider w-32 mx-auto" />

@@ -128,9 +128,7 @@ export function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto stagger-children">
-        <p className="text-secondary font-arabic text-2xl md:text-3xl mb-4">
-          بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
-        </p>
+
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6">
           {title}

@@ -29,8 +29,7 @@ export function DonationSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16 stagger-children">
-          <span className="text-secondary font-arabic text-xl">تبرعات</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mt-2 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
             Donasi & Infaq
           </h2>
           <div className="w-32 h-px bg-primary-foreground/30 mx-auto mb-6" />
