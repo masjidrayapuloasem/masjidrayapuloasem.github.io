@@ -45,7 +45,9 @@ const PLATFORM_OPTIONS = [
 
 const SECTION_VISIBILITY = [
   { key: "section_hero_visible", label: "Hero Slider" },
-  { key: "section_about_visible", label: "Profil Masjid" },
+  { key: "section_sejarah_visible", label: "Sejarah" },
+  { key: "section_visimisi_visible", label: "Visi & Misi" },
+  { key: "section_kepengurusan_visible", label: "Struktur Kepengurusan" },
   { key: "section_announcements_visible", label: "Pengumuman" },
   { key: "section_schedule_visible", label: "Jadwal Sholat" },
   { key: "section_articles_visible", label: "Artikel" },
