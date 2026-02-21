@@ -2,6 +2,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import ImageResize from "tiptap-extension-resize-image";
+import { mergeAttributes } from "@tiptap/react";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import DOMPurify from "dompurify";
@@ -90,7 +91,52 @@ export function RichTextEditor({
           class: "text-primary underline",
         },
       }),
-      ImageResize,
+      ImageResize.extend({
+        renderHTML({ HTMLAttributes }) {
+          const { containerStyle, wrapperStyle, ...imgAttrs } = HTMLAttributes;
+          // Extract alignment from containerStyle
+          let alignStyle = "display: block;";
+          if (containerStyle) {
+            if (containerStyle.includes("margin: 0 auto;") || containerStyle.includes("margin: 0px auto")) {
+              alignStyle = "display: block; margin: 0 auto;";
+            } else if (containerStyle.includes("margin: 0 0 0 auto") || containerStyle.includes("margin: 0px 0px 0px auto")) {
+              alignStyle = "display: block; margin: 0 0 0 auto;";
+            } else if (containerStyle.includes("float: right")) {
+              alignStyle = "display: inline-block; float: right; padding-left: 8px;";
+            } else if (containerStyle.includes("float: left")) {
+              alignStyle = "display: inline-block; float: left; padding-right: 8px;";
+            }
+            // Preserve width
+            const widthMatch = containerStyle.match(/width:\s*([0-9.]+px)/);
+            if (widthMatch) {
+              alignStyle += ` width: ${widthMatch[1]};`;
+            }
+          }
+          return [
+            "div",
+            { style: alignStyle },
+            ["img", mergeAttributes(imgAttrs, { style: "max-width: 100%; height: auto;" })],
+          ];
+        },
+        parseHTML() {
+          return [
+            {
+              tag: "div > img",
+              getAttrs: (node: HTMLElement) => {
+                const img = node as HTMLImageElement;
+                const parent = img.parentElement;
+                return {
+                  src: img.getAttribute("src"),
+                  alt: img.getAttribute("alt"),
+                  width: img.getAttribute("width"),
+                  containerStyle: parent?.getAttribute("style") || "",
+                };
+              },
+            },
+            { tag: "img[src]" },
+          ];
+        },
+      }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
