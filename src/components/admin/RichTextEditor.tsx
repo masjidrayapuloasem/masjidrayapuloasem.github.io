@@ -5,9 +5,12 @@ import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import DOMPurify from "dompurify";
+import { useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { isValidUrl } from "@/lib/errorUtils";
+import { useToast } from "@/hooks/use-toast";
 import {
   Bold,
   Italic,
@@ -27,6 +30,7 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Upload,
 } from "lucide-react";
 
 interface RichTextEditorProps {
@@ -71,6 +75,8 @@ export function RichTextEditor({
   placeholder = "Tulis konten di sini...",
   className,
 }: RichTextEditorProps) {
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -137,6 +143,43 @@ export function RichTextEditor({
       }
       editor.chain().focus().setImage({ src: url }).run();
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "File harus berupa gambar", variant: "destructive" });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Ukuran gambar maksimal 5MB", variant: "destructive" });
+      return;
+    }
+
+    const ext = file.name.split(".").pop();
+    const fileName = `editor/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { data, error } = await supabase.storage
+      .from("cms-images")
+      .upload(fileName, file);
+
+    if (error) {
+      toast({ title: "Gagal upload gambar", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("cms-images")
+      .getPublicUrl(data.path);
+
+    editor.chain().focus().setImage({ src: urlData.publicUrl }).run();
+    toast({ title: "Gambar berhasil diupload" });
+
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -227,8 +270,11 @@ export function RichTextEditor({
         >
           <LinkIcon className="h-4 w-4" />
         </MenuButton>
-        <MenuButton onClick={addImage} title="Add Image">
+        <MenuButton onClick={addImage} title="Gambar dari URL">
           <ImageIcon className="h-4 w-4" />
+        </MenuButton>
+        <MenuButton onClick={() => fileInputRef.current?.click()} title="Upload Gambar">
+          <Upload className="h-4 w-4" />
         </MenuButton>
 
         <div className="mx-1 h-6 w-px bg-border" />
@@ -281,6 +327,13 @@ export function RichTextEditor({
       </div>
 
       <EditorContent editor={editor} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
     </div>
   );
 }
