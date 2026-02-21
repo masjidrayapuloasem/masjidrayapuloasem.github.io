@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const navLinks = [
   { href: "#beranda", label: "Beranda" },
@@ -14,6 +15,11 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: settings } = useSiteSettings();
+
+  const mosqueName = settings?.mosque_name || "Masjid Raya";
+  const mosqueSubtitle = settings?.mosque_subtitle || "Pulo Asem";
+  const logoUrl = settings?.logo_url;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,15 +38,19 @@ export function Header() {
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <a href="#beranda" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-arabic text-xl">م</span>
-          </div>
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="w-10 h-10 rounded-full object-cover" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-arabic text-xl">م</span>
+            </div>
+          )}
           <div className="flex flex-col">
             <span className={`font-bold text-lg leading-tight transition-colors ${isScrolled ? "text-foreground" : "text-primary-foreground"}`}>
-              Masjid Raya
+              {mosqueName}
             </span>
             <span className={`text-sm font-medium leading-tight transition-colors ${isScrolled ? "text-primary" : "text-secondary"}`}>
-              Pulo Asem
+              {mosqueSubtitle}
             </span>
           </div>
         </a>
