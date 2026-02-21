@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard, FileText, Megaphone, CalendarDays, Image, LogOut, Menu, X, ImagePlus, Users, Activity, ScrollText, Settings,
+  LayoutDashboard, FileText, Megaphone, CalendarDays, Image, LogOut, Menu, X, ImagePlus, Users, Activity, ScrollText, Settings, HandCoins,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -16,6 +16,7 @@ const menuItems = [
   { icon: ImagePlus, label: "Gambar Hero", path: "/admin/hero-images" },
   { icon: Users, label: "Kepengurusan", path: "/admin/organization" },
   { icon: Activity, label: "Kegiatan", path: "/admin/activities" },
+  { icon: HandCoins, label: "Donasi & Infaq", path: "/admin/donation" },
   { icon: ScrollText, label: "Profil Masjid", path: "/admin/site-content" },
   { icon: Settings, label: "Pengaturan Situs", path: "/admin/settings" },
 ];
