@@ -67,15 +67,17 @@ export function AboutSection() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Sejarah Singkat</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {content.sejarah || "Memuat..."}
-                </p>
+                <div
+                  className="text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.sejarah || "Memuat...") }}
+                />
               </div>
             </div>
 
-            <p className="text-muted-foreground leading-relaxed pl-[4.5rem]">
-              {content.sejarah_detail || ""}
-            </p>
+            <div
+              className="text-muted-foreground leading-relaxed pl-[4.5rem] prose prose-sm dark:prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.sejarah_detail || "") }}
+            />
           </div>
 
           {/* Decorative Card */}
@@ -104,9 +106,14 @@ export function AboutSection() {
               </div>
               <h3 className="text-2xl font-bold text-foreground">Visi</h3>
             </div>
-            <p className="text-muted-foreground leading-relaxed">
-              {content.visi || "Memuat..."}
-            </p>
+            {content.visi ? (
+              <div
+                className="text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.visi) }}
+              />
+            ) : (
+              <p className="text-muted-foreground">Memuat...</p>
+            )}
           </div>
 
           {/* Misi */}

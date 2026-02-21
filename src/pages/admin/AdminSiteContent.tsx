@@ -17,9 +17,9 @@ interface ContentItem {
 }
 
 const CONTENT_KEYS = [
-  { key: "sejarah", label: "Sejarah Singkat", useRichText: false },
-  { key: "sejarah_detail", label: "Detail Sejarah", useRichText: false },
-  { key: "visi", label: "Visi", useRichText: false },
+  { key: "sejarah", label: "Sejarah Singkat", useRichText: true },
+  { key: "sejarah_detail", label: "Detail Sejarah", useRichText: true },
+  { key: "visi", label: "Visi", useRichText: true },
   { key: "misi", label: "Misi", useRichText: true },
   { key: "ayat_arab", label: "Ayat Al-Quran (Arab)", useRichText: false },
   { key: "ayat_terjemah", label: "Terjemah Ayat", useRichText: false },
