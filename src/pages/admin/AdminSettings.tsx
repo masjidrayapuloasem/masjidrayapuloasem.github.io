@@ -10,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, Upload, X, Image as ImageIcon, Plus, Trash2, GripVertical } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface SettingField {
   key: string;
@@ -69,6 +72,74 @@ const SECTIONS: { title: string; description: string; fields: SettingField[] }[]
     ],
   },
 ];
+
+interface SortableItemProps {
+  item: SocialMedia;
+  onPlatformChange: (id: string, platform: string) => void;
+  onUrlChange: (id: string, url: string) => void;
+  onToggleActive: (id: string, active: boolean) => void;
+  onSave: (item: SocialMedia) => void;
+  onDelete: (id: string) => void;
+  isSaving: boolean;
+}
+
+function SortableSocialItem({ item, onPlatformChange, onUrlChange, onToggleActive, onSave, onDelete, isSaving }: SortableItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-lg border bg-muted/30">
+      <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing flex-shrink-0 hidden sm:block touch-none">
+        <GripVertical className="h-5 w-5 text-muted-foreground" />
+      </button>
+
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+        <Select value={item.platform} onValueChange={(val) => onPlatformChange(item.id, val)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PLATFORM_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>{opt.value}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Input
+          className="sm:col-span-2"
+          value={item.url}
+          onChange={(e) => onUrlChange(item.id, e.target.value)}
+          placeholder="https://..."
+        />
+      </div>
+
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-muted-foreground whitespace-nowrap">
+            {item.active ? "Tampil" : "Sembunyi"}
+          </Label>
+          <Switch
+            checked={item.active}
+            onCheckedChange={(checked) => onToggleActive(item.id, checked)}
+          />
+        </div>
+
+        <Button variant="outline" size="icon" onClick={() => onSave(item)} disabled={isSaving} className="h-9 w-9">
+          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        </Button>
+
+        <Button variant="ghost" size="icon" onClick={() => onDelete(item.id)} className="h-9 w-9 text-destructive hover:text-destructive">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -198,6 +269,29 @@ export default function AdminSettings() {
     toast({ title: "Berhasil disimpan" });
   };
 
+  // DnD
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = socialMedia.findIndex((s) => s.id === active.id);
+    const newIndex = socialMedia.findIndex((s) => s.id === over.id);
+    const reordered = arrayMove(socialMedia, oldIndex, newIndex);
+    const updated = reordered.map((s, i) => ({ ...s, sort_order: i }));
+    setSocialMedia(updated);
+
+    // Persist new order
+    for (const item of updated) {
+      await supabase.from("social_media").update({ sort_order: item.sort_order }).eq("id", item.id);
+    }
+    queryClient.invalidateQueries({ queryKey: ["social_media"] });
+  };
+
   if (isLoading) {
     return (
       <AdminLayout>
@@ -291,64 +385,24 @@ export default function AdminSettings() {
               <p className="text-sm text-muted-foreground text-center py-8">Belum ada media sosial. Klik "Tambah" untuk menambahkan.</p>
             )}
 
-            <div className="space-y-4">
-              {socialMedia.map((item) => (
-                <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-lg border bg-muted/30">
-                  <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 hidden sm:block" />
-
-                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-                    <Select value={item.platform} onValueChange={(val) => handlePlatformChange(item.id, val)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PLATFORM_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>{opt.value}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <Input
-                      className="sm:col-span-2"
-                      value={item.url}
-                      onChange={(e) => handleUrlChange(item.id, e.target.value)}
-                      placeholder="https://..."
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={socialMedia.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-4">
+                  {socialMedia.map((item) => (
+                    <SortableSocialItem
+                      key={item.id}
+                      item={item}
+                      onPlatformChange={handlePlatformChange}
+                      onUrlChange={handleUrlChange}
+                      onToggleActive={(id, checked) => handleUpdateSocial(id, { active: checked })}
+                      onSave={handleSaveSocialItem}
+                      onDelete={handleDeleteSocial}
+                      isSaving={savingSocial === item.id}
                     />
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="flex items-center gap-2">
-                      <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        {item.active ? "Tampil" : "Sembunyi"}
-                      </Label>
-                      <Switch
-                        checked={item.active}
-                        onCheckedChange={(checked) => handleUpdateSocial(item.id, { active: checked })}
-                      />
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleSaveSocialItem(item)}
-                      disabled={savingSocial === item.id}
-                      className="h-9 w-9"
-                    >
-                      {savingSocial === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteSocial(item.id)}
-                      className="h-9 w-9 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           </div>
         </div>
       </div>
