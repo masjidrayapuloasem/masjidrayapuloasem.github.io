@@ -3,6 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import TextAlign from "@tiptap/extension-text-align";
 import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,10 @@ import {
   Heading2,
   Heading3,
   Minus,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
 
 interface RichTextEditorProps {
@@ -84,6 +89,9 @@ export function RichTextEditor({
           class: "max-w-full h-auto rounded-lg",
         },
       }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
       Placeholder.configure({
         placeholder,
       }),
@@ -99,7 +107,7 @@ export function RichTextEditor({
       // Sanitize HTML output to prevent XSS attacks
       const sanitizedHTML = DOMPurify.sanitize(editor.getHTML(), {
         ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'hr'],
-        ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel', 'style'],
       });
       onChange(sanitizedHTML);
     },
@@ -221,6 +229,37 @@ export function RichTextEditor({
         </MenuButton>
         <MenuButton onClick={addImage} title="Add Image">
           <ImageIcon className="h-4 w-4" />
+        </MenuButton>
+
+        <div className="mx-1 h-6 w-px bg-border" />
+
+        <MenuButton
+          onClick={() => editor.chain().focus().setTextAlign("left").run()}
+          isActive={editor.isActive({ textAlign: "left" })}
+          title="Rata Kiri"
+        >
+          <AlignLeft className="h-4 w-4" />
+        </MenuButton>
+        <MenuButton
+          onClick={() => editor.chain().focus().setTextAlign("center").run()}
+          isActive={editor.isActive({ textAlign: "center" })}
+          title="Rata Tengah"
+        >
+          <AlignCenter className="h-4 w-4" />
+        </MenuButton>
+        <MenuButton
+          onClick={() => editor.chain().focus().setTextAlign("right").run()}
+          isActive={editor.isActive({ textAlign: "right" })}
+          title="Rata Kanan"
+        >
+          <AlignRight className="h-4 w-4" />
+        </MenuButton>
+        <MenuButton
+          onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+          isActive={editor.isActive({ textAlign: "justify" })}
+          title="Rata Kanan Kiri"
+        >
+          <AlignJustify className="h-4 w-4" />
         </MenuButton>
 
         <div className="mx-1 h-6 w-px bg-border" />
