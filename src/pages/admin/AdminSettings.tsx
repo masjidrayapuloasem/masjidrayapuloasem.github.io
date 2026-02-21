@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, Upload, X, Image as ImageIcon } from "lucide-react";
+import { Loader2, Save, Upload, X, Image as ImageIcon, Plus, Trash2, GripVertical } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface SettingField {
@@ -15,6 +17,28 @@ interface SettingField {
   type: "text" | "textarea" | "url" | "image";
   placeholder?: string;
 }
+
+interface SocialMedia {
+  id: string;
+  platform: string;
+  url: string;
+  icon_name: string;
+  sort_order: number;
+  active: boolean;
+}
+
+const PLATFORM_OPTIONS = [
+  { value: "Facebook", icon: "Facebook" },
+  { value: "Instagram", icon: "Instagram" },
+  { value: "YouTube", icon: "Youtube" },
+  { value: "TikTok", icon: "Music" },
+  { value: "Twitter / X", icon: "Twitter" },
+  { value: "Google Maps", icon: "Map" },
+  { value: "WhatsApp", icon: "MessageCircle" },
+  { value: "Telegram", icon: "Send" },
+  { value: "LinkedIn", icon: "Linkedin" },
+  { value: "Lainnya", icon: "Link" },
+];
 
 const SECTIONS: { title: string; description: string; fields: SettingField[] }[] = [
   {
@@ -44,40 +68,35 @@ const SECTIONS: { title: string; description: string; fields: SettingField[] }[]
       { key: "footer_hours_office", label: "Jam Sekretariat", type: "text", placeholder: "08:00 - 16:00 WIB" },
     ],
   },
-  {
-    title: "Media Sosial",
-    description: "Link akun media sosial masjid",
-    fields: [
-      { key: "social_facebook", label: "Facebook", type: "url", placeholder: "https://facebook.com/..." },
-      { key: "social_instagram", label: "Instagram", type: "url", placeholder: "https://instagram.com/..." },
-      { key: "social_youtube", label: "YouTube", type: "url", placeholder: "https://youtube.com/..." },
-      { key: "social_tiktok", label: "TikTok", type: "url", placeholder: "https://tiktok.com/..." },
-      { key: "social_twitter", label: "Twitter / X", type: "url", placeholder: "https://x.com/..." },
-      { key: "social_google_maps", label: "Google Maps", type: "url", placeholder: "https://maps.google.com/..." },
-    ],
-  },
 ];
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState<Record<string, string>>({});
+  const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [savingSection, setSavingSection] = useState<string | null>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [savingSocial, setSavingSocial] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    fetchSettings();
+    fetchAll();
   }, []);
 
-  const fetchSettings = async () => {
-    const { data, error } = await supabase.from("site_settings").select("key, value");
-    if (!error && data) {
+  const fetchAll = async () => {
+    const [settingsRes, socialRes] = await Promise.all([
+      supabase.from("site_settings").select("key, value"),
+      supabase.from("social_media").select("*").order("sort_order"),
+    ]);
+
+    if (settingsRes.data) {
       const map: Record<string, string> = {};
-      data.forEach((item) => {
-        map[item.key] = item.value;
-      });
+      settingsRes.data.forEach((item) => { map[item.key] = item.value; });
       setSettings(map);
+    }
+    if (socialRes.data) {
+      setSocialMedia(socialRes.data);
     }
     setIsLoading(false);
   };
@@ -86,12 +105,9 @@ export default function AdminSettings() {
     setSavingSection(sectionTitle);
     try {
       for (const field of fields) {
-        if (field.type === "image") continue; // handled separately
+        if (field.type === "image") continue;
         const value = settings[field.key] ?? "";
-        await supabase
-          .from("site_settings")
-          .update({ value })
-          .eq("key", field.key);
+        await supabase.from("site_settings").update({ value }).eq("key", field.key);
       }
       queryClient.invalidateQueries({ queryKey: ["site_settings"] });
       toast({ title: "Berhasil disimpan" });
@@ -104,26 +120,18 @@ export default function AdminSettings() {
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploadingLogo(true);
     const fileExt = file.name.split(".").pop();
     const filePath = `logo/logo-${Date.now()}.${fileExt}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("cms-images")
-      .upload(filePath, file);
-
+    const { error: uploadError } = await supabase.storage.from("cms-images").upload(filePath, file);
     if (uploadError) {
       toast({ title: "Gagal upload", description: uploadError.message, variant: "destructive" });
       setUploadingLogo(false);
       return;
     }
-
     const { data: urlData } = supabase.storage.from("cms-images").getPublicUrl(filePath);
-    const publicUrl = urlData.publicUrl;
-
-    await supabase.from("site_settings").update({ value: publicUrl }).eq("key", "logo_url");
-    setSettings((prev) => ({ ...prev, logo_url: publicUrl }));
+    await supabase.from("site_settings").update({ value: urlData.publicUrl }).eq("key", "logo_url");
+    setSettings((prev) => ({ ...prev, logo_url: urlData.publicUrl }));
     queryClient.invalidateQueries({ queryKey: ["site_settings"] });
     toast({ title: "Logo berhasil diupload" });
     setUploadingLogo(false);
@@ -134,6 +142,60 @@ export default function AdminSettings() {
     setSettings((prev) => ({ ...prev, logo_url: "" }));
     queryClient.invalidateQueries({ queryKey: ["site_settings"] });
     toast({ title: "Logo dihapus" });
+  };
+
+  // Social media CRUD
+  const handleAddSocial = async () => {
+    const newOrder = socialMedia.length;
+    const { data, error } = await supabase
+      .from("social_media")
+      .insert({ platform: "Facebook", url: "", icon_name: "Facebook", sort_order: newOrder, active: true })
+      .select()
+      .single();
+    if (error) {
+      toast({ title: "Gagal menambah", variant: "destructive" });
+      return;
+    }
+    setSocialMedia((prev) => [...prev, data]);
+    queryClient.invalidateQueries({ queryKey: ["social_media"] });
+  };
+
+  const handleUpdateSocial = async (id: string, updates: Partial<SocialMedia>) => {
+    setSavingSocial(id);
+    const { error } = await supabase.from("social_media").update(updates).eq("id", id);
+    if (error) {
+      toast({ title: "Gagal menyimpan", variant: "destructive" });
+    } else {
+      setSocialMedia((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+      queryClient.invalidateQueries({ queryKey: ["social_media"] });
+    }
+    setSavingSocial(null);
+  };
+
+  const handleDeleteSocial = async (id: string) => {
+    const { error } = await supabase.from("social_media").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Gagal menghapus", variant: "destructive" });
+    } else {
+      setSocialMedia((prev) => prev.filter((s) => s.id !== id));
+      queryClient.invalidateQueries({ queryKey: ["social_media"] });
+      toast({ title: "Berhasil dihapus" });
+    }
+  };
+
+  const handlePlatformChange = (id: string, platform: string) => {
+    const option = PLATFORM_OPTIONS.find((p) => p.value === platform);
+    const iconName = option?.icon || "Link";
+    setSocialMedia((prev) => prev.map((s) => (s.id === id ? { ...s, platform, icon_name: iconName } : s)));
+  };
+
+  const handleUrlChange = (id: string, url: string) => {
+    setSocialMedia((prev) => prev.map((s) => (s.id === id ? { ...s, url } : s)));
+  };
+
+  const handleSaveSocialItem = async (item: SocialMedia) => {
+    await handleUpdateSocial(item.id, { platform: item.platform, url: item.url, icon_name: item.icon_name });
+    toast({ title: "Berhasil disimpan" });
   };
 
   if (isLoading) {
@@ -153,6 +215,7 @@ export default function AdminSettings() {
         <p className="text-muted-foreground">Kelola logo, informasi footer, dan media sosial.</p>
 
         <div className="space-y-8">
+          {/* Site Settings Sections */}
           {SECTIONS.map((section) => (
             <div key={section.title} className="bg-card rounded-lg border p-6 space-y-5">
               <div>
@@ -163,20 +226,12 @@ export default function AdminSettings() {
               {section.fields.map((field) => (
                 <div key={field.key} className="space-y-2">
                   <Label>{field.label}</Label>
-
                   {field.type === "image" ? (
                     <div className="space-y-3">
                       {settings.logo_url ? (
                         <div className="relative inline-block">
-                          <img
-                            src={settings.logo_url}
-                            alt="Logo"
-                            className="h-20 w-20 object-contain rounded-lg border bg-muted p-2"
-                          />
-                          <button
-                            onClick={handleRemoveLogo}
-                            className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
-                          >
+                          <img src={settings.logo_url} alt="Logo" className="h-20 w-20 object-contain rounded-lg border bg-muted p-2" />
+                          <button onClick={handleRemoveLogo} className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1">
                             <X className="h-3 w-3" />
                           </button>
                         </div>
@@ -185,27 +240,15 @@ export default function AdminSettings() {
                           <ImageIcon className="h-8 w-8 text-muted-foreground" />
                         </div>
                       )}
-                      <div>
-                        <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleLogoUpload}
-                            disabled={uploadingLogo}
-                          />
-                          <Button variant="outline" size="sm" asChild disabled={uploadingLogo}>
-                            <span>
-                              {uploadingLogo ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              ) : (
-                                <Upload className="mr-2 h-4 w-4" />
-                              )}
-                              Upload Logo
-                            </span>
-                          </Button>
-                        </label>
-                      </div>
+                      <label className="cursor-pointer">
+                        <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={uploadingLogo} />
+                        <Button variant="outline" size="sm" asChild disabled={uploadingLogo}>
+                          <span>
+                            {uploadingLogo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                            Upload Logo
+                          </span>
+                        </Button>
+                      </label>
                     </div>
                   ) : field.type === "textarea" ? (
                     <Textarea
@@ -224,19 +267,89 @@ export default function AdminSettings() {
                 </div>
               ))}
 
-              <Button
-                onClick={() => handleSaveSection(section.title, section.fields)}
-                disabled={savingSection === section.title}
-              >
-                {savingSection === section.title ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Save className="mr-2 h-4 w-4" />
-                )}
+              <Button onClick={() => handleSaveSection(section.title, section.fields)} disabled={savingSection === section.title}>
+                {savingSection === section.title ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                 Simpan
               </Button>
             </div>
           ))}
+
+          {/* Social Media Section */}
+          <div className="bg-card rounded-lg border p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold">Media Sosial</h2>
+                <p className="text-sm text-muted-foreground">Kelola link media sosial yang tampil di footer</p>
+              </div>
+              <Button onClick={handleAddSocial} size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Tambah
+              </Button>
+            </div>
+
+            {socialMedia.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8">Belum ada media sosial. Klik "Tambah" untuk menambahkan.</p>
+            )}
+
+            <div className="space-y-4">
+              {socialMedia.map((item) => (
+                <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-lg border bg-muted/30">
+                  <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 hidden sm:block" />
+
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+                    <Select value={item.platform} onValueChange={(val) => handlePlatformChange(item.id, val)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PLATFORM_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>{opt.value}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Input
+                      className="sm:col-span-2"
+                      value={item.url}
+                      onChange={(e) => handleUrlChange(item.id, e.target.value)}
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-xs text-muted-foreground whitespace-nowrap">
+                        {item.active ? "Tampil" : "Sembunyi"}
+                      </Label>
+                      <Switch
+                        checked={item.active}
+                        onCheckedChange={(checked) => handleUpdateSocial(item.id, { active: checked })}
+                      />
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleSaveSocialItem(item)}
+                      disabled={savingSocial === item.id}
+                      className="h-9 w-9"
+                    >
+                      {savingSocial === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteSocial(item.id)}
+                      className="h-9 w-9 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </AdminLayout>
