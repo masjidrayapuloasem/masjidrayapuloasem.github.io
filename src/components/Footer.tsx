@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -19,6 +19,7 @@ export function Footer() {
     { key: "social_facebook", icon: Facebook, label: "Facebook" },
     { key: "social_instagram", icon: Instagram, label: "Instagram" },
     { key: "social_youtube", icon: Youtube, label: "YouTube" },
+    { key: "social_google_maps", icon: Map, label: "Google Maps" },
   ].filter((s) => settings?.[s.key]);
 
   return (
