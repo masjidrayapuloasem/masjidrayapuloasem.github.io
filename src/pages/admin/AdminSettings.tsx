@@ -53,6 +53,7 @@ const SECTIONS: { title: string; description: string; fields: SettingField[] }[]
       { key: "social_youtube", label: "YouTube", type: "url", placeholder: "https://youtube.com/..." },
       { key: "social_tiktok", label: "TikTok", type: "url", placeholder: "https://tiktok.com/..." },
       { key: "social_twitter", label: "Twitter / X", type: "url", placeholder: "https://x.com/..." },
+      { key: "social_google_maps", label: "Google Maps", type: "url", placeholder: "https://maps.google.com/..." },
     ],
   },
 ];
