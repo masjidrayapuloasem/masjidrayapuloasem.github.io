@@ -18,6 +18,7 @@ import AdminOrganization from "./pages/admin/AdminOrganization";
 import AdminActivities from "./pages/admin/AdminActivities";
 import AdminSiteContent from "./pages/admin/AdminSiteContent";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminDonation from "./pages/admin/AdminDonation";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/admin/activities" element={<AdminActivities />} />
             <Route path="/admin/site-content" element={<AdminSiteContent />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/donation" element={<AdminDonation />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
