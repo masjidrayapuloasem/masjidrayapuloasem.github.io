@@ -47,7 +47,7 @@ const SECTION_VISIBILITY = [
   { key: "section_hero_visible", label: "Hero Slider" },
   { key: "section_about_visible", label: "Profil Masjid" },
   { key: "section_announcements_visible", label: "Pengumuman" },
-  { key: "section_schedule_visible", label: "Jadwal Kegiatan" },
+  { key: "section_schedule_visible", label: "Jadwal Sholat" },
   { key: "section_articles_visible", label: "Artikel" },
   { key: "section_activities_visible", label: "Program & Kegiatan" },
   { key: "section_donation_visible", label: "Donasi & Infaq" },
