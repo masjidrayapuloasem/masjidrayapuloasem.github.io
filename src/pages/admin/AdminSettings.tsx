@@ -43,6 +43,16 @@ const PLATFORM_OPTIONS = [
   { value: "Lainnya", icon: "Link" },
 ];
 
+const SECTION_VISIBILITY = [
+  { key: "section_hero_visible", label: "Hero Slider" },
+  { key: "section_about_visible", label: "Profil Masjid" },
+  { key: "section_announcements_visible", label: "Pengumuman" },
+  { key: "section_schedule_visible", label: "Jadwal Kegiatan" },
+  { key: "section_articles_visible", label: "Artikel" },
+  { key: "section_activities_visible", label: "Program & Kegiatan" },
+  { key: "section_donation_visible", label: "Donasi & Infaq" },
+];
+
 const SECTIONS: { title: string; description: string; fields: SettingField[] }[] = [
   {
     title: "Logo & Identitas",
@@ -309,6 +319,35 @@ export default function AdminSettings() {
         <p className="text-muted-foreground">Kelola logo, informasi footer, dan media sosial.</p>
 
         <div className="space-y-8">
+          {/* Section Visibility */}
+          <div className="bg-card rounded-lg border p-6 space-y-5">
+            <div>
+              <h2 className="text-lg font-semibold">Tampilan Section</h2>
+              <p className="text-sm text-muted-foreground">Atur section mana saja yang ditampilkan di halaman utama</p>
+            </div>
+            <div className="space-y-3">
+              {SECTION_VISIBILITY.map((section) => (
+                <div key={section.key} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+                  <span className="font-medium text-sm">{section.label}</span>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground">
+                      {settings[section.key] !== "false" ? "Tampil" : "Tersembunyi"}
+                    </Label>
+                    <Switch
+                      checked={settings[section.key] !== "false"}
+                      onCheckedChange={async (checked) => {
+                        const newVal = checked ? "true" : "false";
+                        setSettings((prev) => ({ ...prev, [section.key]: newVal }));
+                        await supabase.from("site_settings").update({ value: newVal }).eq("key", section.key);
+                        queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Site Settings Sections */}
           {SECTIONS.map((section) => (
             <div key={section.title} className="bg-card rounded-lg border p-6 space-y-5">
