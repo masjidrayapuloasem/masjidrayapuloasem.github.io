@@ -79,13 +79,13 @@ export function DonationSection() {
                 <QrCode className="w-6 h-6" />
                 <h3 className="text-xl font-bold">Scan QRIS</h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center">
+              <div className={`flex flex-wrap justify-center gap-4`}>
                 {qrisList.map((item) => (
-                  <div key={item.id} className="bg-card rounded-2xl p-4 shadow-elevated">
+                  <div key={item.id} className="bg-card rounded-2xl p-4 shadow-elevated max-w-xs w-full">
                     <img
                       src={item.image_url}
                       alt={item.caption || "QRIS"}
-                      className="w-full max-w-xs mx-auto h-auto object-contain rounded-lg"
+                      className="w-full h-auto object-contain rounded-lg"
                     />
                     {item.caption && (
                       <p className="text-center text-sm text-muted-foreground mt-2">{item.caption}</p>
@@ -103,9 +103,9 @@ export function DonationSection() {
                 <Building2 className="w-6 h-6" />
                 <h3 className="text-xl font-bold">Transfer Rekening</h3>
               </div>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className={`flex flex-wrap justify-center gap-6 ${banks.length === 1 ? '' : 'max-w-4xl'}`}>
                 {banks.map((account) => (
-                  <div key={account.id} className="bg-card rounded-2xl p-6 shadow-elevated">
+                  <div key={account.id} className="bg-card rounded-2xl p-6 shadow-elevated w-full md:w-[calc(50%-0.75rem)] max-w-md">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
                         <Building2 className="w-6 h-6 text-primary" />
