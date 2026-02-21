@@ -1,9 +1,27 @@
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Map } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Map, Music, MessageCircle, Send, Linkedin, Twitter, Link as LinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Facebook, Instagram, Youtube, Map, Music, MessageCircle, Send, Linkedin, Twitter, Link: LinkIcon,
+};
 
 export function Footer() {
   const { data: settings } = useSiteSettings();
+  const { data: socialMedia } = useQuery({
+    queryKey: ["social_media"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("social_media")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      return data ?? [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const mosqueName = settings?.mosque_name || "Masjid Raya";
   const mosqueSubtitle = settings?.mosque_subtitle || "Pulo Asem";
@@ -14,13 +32,6 @@ export function Footer() {
   const email = settings?.footer_email || "info@masjidpuloasem.org";
   const hoursDaily = settings?.footer_hours_daily || "04:00 - 22:00 WIB";
   const hoursOffice = settings?.footer_hours_office || "08:00 - 16:00 WIB";
-
-  const socialLinks = [
-    { key: "social_facebook", icon: Facebook, label: "Facebook" },
-    { key: "social_instagram", icon: Instagram, label: "Instagram" },
-    { key: "social_youtube", icon: Youtube, label: "YouTube" },
-    { key: "social_google_maps", icon: Map, label: "Google Maps" },
-  ].filter((s) => settings?.[s.key]);
 
   return (
     <footer id="kontak" className="bg-foreground text-background">
@@ -84,31 +95,25 @@ export function Footer() {
           {/* Social Media */}
           <div>
             <h4 className="font-bold text-lg mb-6 text-background">Ikuti Kami</h4>
-            <div className="flex gap-3">
-              {socialLinks.length > 0 ? (
-                socialLinks.map((social) => (
-                  <a
-                    key={social.key}
-                    href={settings?.[social.key] || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors"
-                  >
-                    <social.icon className="w-5 h-5 text-background" />
-                  </a>
-                ))
+            <div className="flex flex-wrap gap-3">
+              {socialMedia && socialMedia.length > 0 ? (
+                socialMedia.map((item) => {
+                  const IconComp = ICON_MAP[item.icon_name] || LinkIcon;
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={item.platform}
+                      className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors"
+                    >
+                      <IconComp className="w-5 h-5 text-background" />
+                    </a>
+                  );
+                })
               ) : (
-                <>
-                  <div className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center">
-                    <Facebook className="w-5 h-5 text-background/50" />
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center">
-                    <Instagram className="w-5 h-5 text-background/50" />
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center">
-                    <Youtube className="w-5 h-5 text-background/50" />
-                  </div>
-                </>
+                <p className="text-background/50 text-sm">Belum ada media sosial</p>
               )}
             </div>
           </div>
