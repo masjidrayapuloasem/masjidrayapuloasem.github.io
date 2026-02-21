@@ -1,7 +1,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
-import Image from "@tiptap/extension-image";
+import ImageResize from "tiptap-extension-resize-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import DOMPurify from "dompurify";
@@ -90,11 +90,7 @@ export function RichTextEditor({
           class: "text-primary underline",
         },
       }),
-      Image.configure({
-        HTMLAttributes: {
-          class: "max-w-full h-auto rounded-lg",
-        },
-      }),
+      ImageResize,
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -112,8 +108,8 @@ export function RichTextEditor({
     onUpdate: ({ editor }) => {
       // Sanitize HTML output to prevent XSS attacks
       const sanitizedHTML = DOMPurify.sanitize(editor.getHTML(), {
-        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'hr'],
-        ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel', 'style'],
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'hr', 'div'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel', 'style', 'width', 'height', 'containerstyle', 'wrapperstyle'],
       });
       onChange(sanitizedHTML);
     },
@@ -141,7 +137,7 @@ export function RichTextEditor({
         window.alert("URL gambar tidak valid. Gunakan format http:// atau https://");
         return;
       }
-      editor.chain().focus().setImage({ src: url }).run();
+      (editor.chain().focus() as any).setImage({ src: url }).run();
     }
   };
 
@@ -175,7 +171,7 @@ export function RichTextEditor({
       .from("cms-images")
       .getPublicUrl(data.path);
 
-    editor.chain().focus().setImage({ src: urlData.publicUrl }).run();
+    (editor.chain().focus() as any).setImage({ src: urlData.publicUrl }).run();
     toast({ title: "Gambar berhasil diupload" });
 
     // Reset input
