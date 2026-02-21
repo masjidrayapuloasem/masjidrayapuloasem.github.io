@@ -155,6 +155,72 @@ export type Database = {
         }
         Relationships: []
       }
+      donation_banks: {
+        Row: {
+          account_name: string
+          account_number: string
+          active: boolean
+          bank_name: string
+          created_at: string
+          created_by: string | null
+          id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          active?: boolean
+          bank_name: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          active?: boolean
+          bank_name?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      donation_qris: {
+        Row: {
+          active: boolean
+          caption: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          caption?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          caption?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hero_images: {
         Row: {
           active: boolean
@@ -486,6 +552,66 @@ export type Database = {
           image_url?: string | null
           subtitle?: string | null
           title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      donation_banks_public: {
+        Row: {
+          account_name: string | null
+          account_number: string | null
+          active: boolean | null
+          bank_name: string | null
+          created_at: string | null
+          id: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_name?: string | null
+          account_number?: string | null
+          active?: boolean | null
+          bank_name?: string | null
+          created_at?: string | null
+          id?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_name?: string | null
+          account_number?: string | null
+          active?: boolean | null
+          bank_name?: string | null
+          created_at?: string | null
+          id?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      donation_qris_public: {
+        Row: {
+          active: boolean | null
+          caption: string | null
+          created_at: string | null
+          id: string | null
+          image_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
           updated_at?: string | null
         }
         Relationships: []
