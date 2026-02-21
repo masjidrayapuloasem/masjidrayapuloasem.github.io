@@ -17,6 +17,7 @@ import AdminHeroImages from "./pages/admin/AdminHeroImages";
 import AdminOrganization from "./pages/admin/AdminOrganization";
 import AdminActivities from "./pages/admin/AdminActivities";
 import AdminSiteContent from "./pages/admin/AdminSiteContent";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/admin/organization" element={<AdminOrganization />} />
             <Route path="/admin/activities" element={<AdminActivities />} />
             <Route path="/admin/site-content" element={<AdminSiteContent />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

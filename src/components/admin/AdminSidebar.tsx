@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard, FileText, Megaphone, CalendarDays, Image, LogOut, Menu, X, ImagePlus, Users, Activity, ScrollText,
+  LayoutDashboard, FileText, Megaphone, CalendarDays, Image, LogOut, Menu, X, ImagePlus, Users, Activity, ScrollText, Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -17,6 +17,7 @@ const menuItems = [
   { icon: Users, label: "Kepengurusan", path: "/admin/organization" },
   { icon: Activity, label: "Kegiatan", path: "/admin/activities" },
   { icon: ScrollText, label: "Profil Masjid", path: "/admin/site-content" },
+  { icon: Settings, label: "Pengaturan Situs", path: "/admin/settings" },
 ];
 
 export function AdminSidebar() {
