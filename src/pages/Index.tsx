@@ -7,18 +7,23 @@ import { ArticlesSection } from "@/components/ArticlesSection";
 import { ActivitiesSection } from "@/components/ActivitiesSection";
 import { DonationSection } from "@/components/DonationSection";
 import { Footer } from "@/components/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Index = () => {
+  const { data: settings } = useSiteSettings();
+
+  const isVisible = (key: string) => settings?.[key] !== "false";
+
   return (
     <div className="min-h-screen">
       <Header />
-      <HeroSection />
-      <AboutSection />
-      <AnnouncementsSection />
-      <PrayerSchedule />
-      <ArticlesSection />
-      <ActivitiesSection />
-      <DonationSection />
+      {isVisible("section_hero_visible") && <HeroSection />}
+      {isVisible("section_about_visible") && <AboutSection />}
+      {isVisible("section_announcements_visible") && <AnnouncementsSection />}
+      {isVisible("section_schedule_visible") && <PrayerSchedule />}
+      {isVisible("section_articles_visible") && <ArticlesSection />}
+      {isVisible("section_activities_visible") && <ActivitiesSection />}
+      {isVisible("section_donation_visible") && <DonationSection />}
       <Footer />
     </div>
   );
