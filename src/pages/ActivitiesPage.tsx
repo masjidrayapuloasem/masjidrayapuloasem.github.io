@@ -4,6 +4,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { stripHtmlTags } from "@/lib/utils";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import MaintenancePage from "@/pages/MaintenancePage";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   BookOpen,
@@ -24,6 +26,7 @@ interface Activity {
 export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { data: siteSettings, isLoading: settingsLoading } = useSiteSettings();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -43,6 +46,10 @@ export default function ActivitiesPage() {
 
     fetchActivities();
   }, []);
+
+  if (!settingsLoading && siteSettings?.maintenance_mode === "true") {
+    return <MaintenancePage />;
+  }
 
   return (
     <div className="min-h-screen">

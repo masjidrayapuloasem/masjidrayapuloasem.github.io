@@ -321,6 +321,31 @@ export default function AdminSettings() {
         <p className="text-muted-foreground">Kelola logo, informasi footer, dan media sosial.</p>
 
         <div className="space-y-8">
+          {/* Maintenance Mode */}
+          <div className="bg-card rounded-lg border border-destructive/30 p-6 space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold text-destructive">Mode Maintenance</h2>
+              <p className="text-sm text-muted-foreground">Aktifkan untuk menutup akses website sementara. Halaman admin tetap bisa diakses.</p>
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+              <span className="font-medium text-sm">Under Maintenance</span>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">
+                  {settings.maintenance_mode === "true" ? "Aktif" : "Nonaktif"}
+                </Label>
+                <Switch
+                  checked={settings.maintenance_mode === "true"}
+                  onCheckedChange={async (checked) => {
+                    const newVal = checked ? "true" : "false";
+                    setSettings((prev) => ({ ...prev, maintenance_mode: newVal }));
+                    await supabase.from("site_settings").update({ value: newVal }).eq("key", "maintenance_mode");
+                    queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Section Visibility */}
           <div className="bg-card rounded-lg border p-6 space-y-5">
             <div>
