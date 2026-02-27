@@ -34,7 +34,7 @@ export function Footer() {
   const hoursOffice = settings?.footer_hours_office || "08:00 - 16:00 WIB";
 
   return (
-    <footer id="kontak" className="bg-foreground text-background">
+    <footer id="kontak" className="bg-foreground text-background" role="contentinfo">
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* About */}

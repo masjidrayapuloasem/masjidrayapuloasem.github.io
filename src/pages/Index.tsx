@@ -22,13 +22,15 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      {isVisible("section_hero_visible") && <HeroSection />}
-      {(isVisible("section_sejarah_visible") || isVisible("section_visimisi_visible") || isVisible("section_kepengurusan_visible")) && <AboutSection />}
-      {isVisible("section_announcements_visible") && <AnnouncementsSection />}
-      {isVisible("section_schedule_visible") && <PrayerSchedule />}
-      {isVisible("section_articles_visible") && <ArticlesSection />}
-      {isVisible("section_activities_visible") && <ActivitiesSection />}
-      {isVisible("section_donation_visible") && <DonationSection />}
+      <main>
+        {isVisible("section_hero_visible") && <HeroSection />}
+        {(isVisible("section_sejarah_visible") || isVisible("section_visimisi_visible") || isVisible("section_kepengurusan_visible")) && <AboutSection />}
+        {isVisible("section_announcements_visible") && <AnnouncementsSection />}
+        {isVisible("section_schedule_visible") && <PrayerSchedule />}
+        {isVisible("section_articles_visible") && <ArticlesSection />}
+        {isVisible("section_activities_visible") && <ActivitiesSection />}
+        {isVisible("section_donation_visible") && <DonationSection />}
+      </main>
       <Footer />
     </div>
   );
